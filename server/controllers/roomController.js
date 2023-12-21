@@ -26,7 +26,12 @@ class roomController{
     }
 
     getStaffs(req, res){
-        let q = `SELECT staffs.id, staffs.name, staffs.email FROM staffs, rooms, working_seats, cameras WHERE staffs.id=working_seats.staff_id AND woking_seats.camera_id=cameras.id AND cameras.room_id=rooms.id AND rooms.id=${req.params.id}`
+        let q = `SELECT staffs.id, staffs.name, staffs.email, staffs.phone, staffs.updated_at 
+            FROM staffs, rooms, working_seats, cameras 
+            WHERE staffs.id=working_seats.staff_id 
+            AND working_seats.camera_id=cameras.id 
+            AND cameras.room_id=rooms.id 
+            AND rooms.id=${req.params.id}`
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result)

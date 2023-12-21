@@ -2,7 +2,7 @@ const db = require("../config/database");
 
 class cameraController{
     showAllCameras(req, res){
-        let q = 'SELECT cameras.id, camera_name, camera_url, description, rooms.room_name, cameras.status, cameras.updated_at FROM cameras, rooms WHERE cameras.room_id=rooms.id'
+        let q = 'SELECT cameras.id, cameras.camera_No, camera_name, description, rooms.room_name, case when (TIMESTAMPDIFF(MINUTE, last_updated_status, now())<6 AND cameras.status=1) then 1 else 0 end as status, cameras.updated_at FROM cameras, rooms WHERE cameras.room_id=rooms.id'
         db.query(q , (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result)
@@ -10,7 +10,7 @@ class cameraController{
     }
 
     showSingleCamera(req, res){
-        let q = `SELECT cameras.id, camera_name, camera_url, description, width, height, cameras.status, cameras.room_id, rooms.room_name FROM cameras, rooms WHERE cameras.room_id=rooms.id AND cameras.id=${req.params.id}`
+        let q = `SELECT cameras.id, camera_name, camera_No, camera_url, description, width, height, cameras.room_id, rooms.room_name FROM cameras, rooms WHERE cameras.room_id=rooms.id AND cameras.id=${req.params.id}`
         db.query(q, (err, result)=>{
             if (err) throw err;
             if (result.length > 0){
@@ -29,9 +29,22 @@ class cameraController{
         })
     }
 
+    checkCameraNoExist(req, res){
+        const { camera_No } = req.body;
+        let q = `SELECT count(*) as count FROM cameras WHERE ?`;
+        db.query(q, {camera_No}, (err, result)=>{
+            if (err) throw err;
+            if (result[0].count>0){
+                return res.status(200).json({message:"Camera_No exists in database"})
+            } else {
+                return res.status(200).json({message:"Camera_No does not exist in database"})
+            }
+        })
+    }
+
 
     getAllCameraNames(req, res){
-        let q = 'SELECT id,camera_name FROM cameras WHERE status="Active"'
+        let q = 'SELECT id,camera_name FROM cameras'
         db.query(q, (err, result)=>{
             if (err) throw err;
             if (result.length>0){
@@ -79,9 +92,9 @@ class cameraController{
     }
 
     updateCamera(req, res){
-        const { camera_name, camera_url, description, width, height, status, room_id } = req.body;
+        const { camera_name, camera_No, camera_url, description, width, height, room_id } = req.body;
         let q = `UPDATE cameras SET ? WHERE id = ${req.params.id}`
-        db.query(q, {camera_name, camera_url, description, width, height, status, room_id}, (err, result)=>{
+        db.query(q, {camera_name, camera_No, camera_url, description, width, height, room_id}, (err, result)=>{
             if (err) throw err;
             return res.status(200).json({message:"Update successfully"})
         })
