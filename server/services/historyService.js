@@ -86,6 +86,21 @@ function convertTotal(data){
     return convertedData
 }
 
+function convertAverage(data){
+    let convertedData = data
+    let total = 0
+    convertedData.forEach((item)=>{
+        total+=item.timeDiff
+    })
+    let avg = total/(convertedData.length)
+    const hours = Math.floor(avg / (1000 * 60 * 60));
+    const minutes = Math.floor((avg % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((avg % (1000 * 60)) / 1000);
+    const time = `${hours}h ${minutes}m ${seconds}s`
+    convertedData.push({id:"avg" ,date:"AVERAGE", workingHours: time, timeDiff:total})
+    return convertedData
+}
+
 function convertAllWorkingHours(data){
     const convertedData = [];
     let currentTask = null;
@@ -199,4 +214,4 @@ function getDaysOff(data, year, month){
     return daysOff
 }
 
-module.exports = {convertWorkingHours, mergeWorkingHours, convertTotal, convertAllWorkingHours, mergeAllWorkingHours, getDaysOff}
+module.exports = {convertWorkingHours, mergeWorkingHours, convertTotal, convertAverage, convertAllWorkingHours, mergeAllWorkingHours, getDaysOff}

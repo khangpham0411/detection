@@ -2,7 +2,7 @@ const db = require("../config/database");
 
 class cameraController{
     showAllCameras(req, res){
-        let q = 'SELECT cameras.id, cameras.camera_No, camera_name, description, rooms.room_name, case when (TIMESTAMPDIFF(MINUTE, last_updated_status, now())<6 AND cameras.status=1) then 1 else 0 end as status, cameras.updated_at FROM cameras, rooms WHERE cameras.room_id=rooms.id'
+        let q = `SELECT cameras.id, cameras.camera_No, camera_name, description, rooms.room_name, case when (TIMESTAMPDIFF(MINUTE, last_updated_status, now())<6 AND cameras.status=1) then 1 else 0 end as status, cameras.updated_at FROM cameras, rooms WHERE cameras.room_id=rooms.id AND cameras.user_id = ${req.params.user_id}`
         db.query(q , (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result)
@@ -10,7 +10,7 @@ class cameraController{
     }
 
     showSingleCamera(req, res){
-        let q = `SELECT cameras.id, camera_name, camera_No, camera_url, description, width, height, cameras.room_id, rooms.room_name FROM cameras, rooms WHERE cameras.room_id=rooms.id AND cameras.id=${req.params.id}`
+        let q = `SELECT cameras.id, camera_name, camera_No, camera_url, description, case when (TIMESTAMPDIFF(MINUTE, last_updated_status, now())<6 AND cameras.status=1) then 1 else 0 end as status, width, height, cameras.room_id, rooms.room_name FROM cameras, rooms WHERE cameras.room_id=rooms.id AND cameras.id=${req.params.id} AND cameras.user_id=${req.params.user_id}`
         db.query(q, (err, result)=>{
             if (err) throw err;
             if (result.length > 0){
@@ -22,7 +22,7 @@ class cameraController{
     }
 
     countCamera(req, res){
-        let q = `SELECT count(*) as count FROM cameras`
+        let q = `SELECT count(*) as count FROM cameras WHERE user_id=${req.params.user_id}`
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result[0])
@@ -44,7 +44,7 @@ class cameraController{
 
 
     getAllCameraNames(req, res){
-        let q = 'SELECT id,camera_name FROM cameras'
+        let q = `SELECT id,camera_name FROM cameras WHERE user_id=${req.params.user_id}`
         db.query(q, (err, result)=>{
             if (err) throw err;
             if (result.length>0){
@@ -65,7 +65,7 @@ class cameraController{
 
 
     getCameraUrl(req, res){
-        let q = `SELECT camera_url FROM cameras WHERE id = ${req.params.id}`
+        let q = `SELECT camera_url, width, height FROM cameras WHERE id = ${req.params.id}`
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result[0])

@@ -2,7 +2,7 @@ const db = require("../config/database");
 
 class staffController{
     showAllStaffs(req, res){
-        let q = "SELECT id, name, email, phone, updated_at FROM staffs";
+        let q = `SELECT id, name, email, phone, updated_at FROM staffs WHERE user_id=${req.params.id}`;
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result)
@@ -10,7 +10,7 @@ class staffController{
     }
 
     countStaff(req, res){
-        let q = `SELECT count(*) as count FROM staffs`
+        let q = `SELECT count(*) as count FROM staffs WHERE user_id=${req.params.id}`
         db.query(q, (err,result)=>{
             if (err) throw err;
             return res.status(200).json(result[0])
@@ -39,8 +39,7 @@ class staffController{
     }
 
     addStaff(req, res){
-        const { name, full_name, email, phone, camera_id, x, y, w, h} = req.body;
-        const user_id = 1
+        const { name, full_name, email, phone, camera_id, x, y, w, h, user_id} = req.body;
         let q = "INSERT INTO staffs SET ?"
         db.query(q, {name, full_name, email, phone, user_id}, (err, result)=>{
             if (err) throw err;
@@ -55,7 +54,7 @@ class staffController{
 
 
     showSingleStaff(req, res){
-        let q = `SELECT id, name, email, full_name, phone, updated_at FROM staffs WHERE id = ${req.params.id}`;
+        let q = `SELECT id, name, email, full_name, phone, updated_at FROM staffs WHERE id = ${req.params.id} AND user_id = ${req.params.user_id}`;
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result[0])
@@ -65,7 +64,7 @@ class staffController{
 
     updateStaffInfo(req, res){
         const { name, email, full_name, phone } = req.body;
-        let q = `UPDATE staffs SET ? WHERE id =${req.params.id}`
+        let q = `UPDATE staffs SET ? WHERE id =${req.params.id} AND user_id=${req.params.user_id}`
         db.query(q,{name, email, full_name, phone}, (err, result)=>{
             if (err) throw err;
             return res.status(200).json({message:"Update successfully"})

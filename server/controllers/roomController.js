@@ -18,7 +18,7 @@ class roomController{
     }
 
     countRoom(req, res){
-        let q = `SELECT count(*) as count FROM rooms`
+        let q = `SELECT count(*) as count FROM rooms WHERE user_id=${req.params.id}`
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result[0])
@@ -49,7 +49,7 @@ class roomController{
     }
 
     getRoomName(req, res){
-        let q = `SELECT id,room_name FROM rooms`
+        let q = `SELECT id, room_name FROM rooms WHERE user_id=${req.params.user_id}`
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result)
