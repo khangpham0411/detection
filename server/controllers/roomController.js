@@ -2,7 +2,7 @@ const db = require("../config/database");
 
 class roomController{
     showAllRooms(req, res){
-        let q = 'SELECT id, room_name, floor, location, updated_at FROM rooms';
+        let q = `SELECT id, room_name, floor, location, updated_at FROM rooms WHERE user_id=${req.params.user_id}`;
         db.query(q , (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result);
@@ -10,7 +10,7 @@ class roomController{
     }
 
     showSingleRoom(req, res){
-        let q = `SELECT id, room_name, floor, location FROM rooms WHERE id=${req.params.id}`;
+        let q = `SELECT id, room_name, floor, location FROM rooms WHERE id=${req.params.id} AND user_id=${req.params.user_id}`;
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result[0])
@@ -58,7 +58,7 @@ class roomController{
 
     updateRoom(req, res){
         const { room_name, location, floor} = req.body;
-        let q = `UPDATE rooms SET ? WHERE id=${req.params.id}`;
+        let q = `UPDATE rooms SET ? WHERE id=${req.params.id} AND user_id=${req.params.user_id}`;
         db.query(q, { room_name, location, floor }, (err, result)=>{
             if (err) throw err;
             return res.status(200).json({message:"Update successfully"});

@@ -18,7 +18,7 @@ class staffController{
     }
 
     getStaffFromCamera(req,res){
-        let q = `SELECT staffs.id, staffs.name, staffs.email, x, y, w, h FROM cameras, staffs, working_seats WHERE cameras.id=working_seats.camera_id AND working_seats.staff_id=staffs.id AND cameras.id=${req.params.id}`;
+        let q = `SELECT staffs.id, staffs.name, staffs.email, x, y, w, h FROM cameras, staffs, working_seats WHERE cameras.id=working_seats.camera_id AND working_seats.staff_id=staffs.id AND cameras.id=${req.params.id} AND staffs.user_id=${req.params.user_id}`;
         db.query(q, (err,result)=>{
             if (err) throw err;
             return res.status(200).json(result)
@@ -54,7 +54,7 @@ class staffController{
 
 
     showSingleStaff(req, res){
-        let q = `SELECT id, name, email, full_name, phone, updated_at FROM staffs WHERE id = ${req.params.id} AND user_id = ${req.params.user_id}`;
+        let q = `SELECT id, name, email, full_name, phone, updated_at FROM staffs WHERE id = ${req.query.id} AND user_id = ${req.query.user_id}`;
         db.query(q, (err, result)=>{
             if (err) throw err;
             return res.status(200).json(result[0])

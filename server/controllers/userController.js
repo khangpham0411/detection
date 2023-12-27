@@ -17,6 +17,19 @@ class userController{
             return res.status(200).json({message:"Update successfully"})
         })
     }
+
+    checkEmailExist(req, res){
+        const email = req.query.q;
+        let q = `SELECT count(*) as count FROM users WHERE email="${email}"`
+        db.query(q, {email}, (err, result)=>{
+            if (err) throw err;
+            if (result[0].count>0){
+                return res.status(200).json({message:"Email exists in database"})
+            } else {
+                return res.status(200).json({message:"Email does not exist in database"})
+            }
+        })
+    }
 }
 
 module.exports = new userController()

@@ -11,7 +11,7 @@ router.get('/url/:id', cameraController.getCameraUrl)
 router.get('/staff/:id', cameraController.getCameraFromStaff)
 router.post('/check/camerano', cameraController.checkCameraNoExist)
 router.post('/create', cameraController.addCamera)
-router.put('/update/:id', cameraController.updateCamera)
+router.put('/update/:id/:user_id', cameraController.updateCamera)
 router.delete('/delete/:id', cameraController.deleteCamera)
 
 module.exports = router;

@@ -93,7 +93,7 @@ class cameraController{
 
     updateCamera(req, res){
         const { camera_name, camera_No, camera_url, description, width, height, room_id } = req.body;
-        let q = `UPDATE cameras SET ? WHERE id = ${req.params.id}`
+        let q = `UPDATE cameras SET ? WHERE id = ${req.params.id} AND user_id = ${req.params.user_id}`
         db.query(q, {camera_name, camera_No, camera_url, description, width, height, room_id}, (err, result)=>{
             if (err) throw err;
             return res.status(200).json({message:"Update successfully"})

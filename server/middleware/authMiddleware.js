@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken")
 require('dotenv').config()
 
-const createJWT = (userid, username) => {
+const createJWT = (userid, email) => {
     let key = process.env.KEY;
     let token = null;
     const payload={
         id : userid,
-        username : username
+        email : email
     }
     try {
         token = jwt.sign(payload, key, {expiresIn:"7d"})
@@ -16,12 +16,12 @@ const createJWT = (userid, username) => {
     return token
 }
 
-const createRefreshJWT =(userid, userName) => {
+const createRefreshJWT =(userid, email) => {
     let key = process.env.REFRESHKEY;
     let refreshtoken = null;
     const payload={
         id : userid,
-        username : userName
+        email : email
     }
     try {
         refreshtoken = jwt.sign(payload, key, {expiresIn:"99d"});
